@@ -12,7 +12,16 @@ Contem:
 Passo a passo para conhecer todos os processos:
 1. Clone o repositório:
 
+2. Instale o Docker Desktop:
+   Instruções estão na documentação: https://docs.docker.com/desktop/setup/install/windows-install/
 
+3. Ligue o Docker Desktop
+
+4. Abra um terminal do powershell dentro da pasta onde está o docker-compose
+
+5. Execute o comando:
+   docker-compose up airflow-init
+   docker-compose up airflow-webserver airflow-scheduler  minio spark spark-worker jupyter
 
 
 
