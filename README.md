@@ -9,19 +9,20 @@ Contem:
    3. Spark - Processador de dados
    4. Jupyter - Para verificar arquivos python
 
-Passo a passo para conhecer todos os processos:
-1. Clone o repositório:
+### Passo a passo para conhecer todos os processos:
+#### 1. Clone o repositório:
 
-2. Instale o Docker Desktop:
+#### 2. Instale o Docker Desktop:
    Instruções estão na documentação: https://docs.docker.com/desktop/setup/install/windows-install/
 
-3. Ligue o Docker Desktop
+#### 3. Ligue o Docker Desktop
 
-4. Abra um terminal do powershell dentro da pasta onde está o docker-compose
+![image](https://github.com/user-attachments/assets/aec92f85-9c63-4375-a1bf-81ae07d6f727)
 
-5. Execute o comando:
-   docker-compose up airflow-init
-   docker-compose up airflow-webserver airflow-scheduler  minio spark spark-worker jupyter
+#### 4. Execute os arquivos de start_container_1 e start_container2, um em seguida do outro para iniciar os container
+Local: beer_case\docker
+
+![image](https://github.com/user-attachments/assets/585ffb1e-bf2f-45ab-bc9b-fd5366a70d9c)
 
 Acesse o airflow:
 
