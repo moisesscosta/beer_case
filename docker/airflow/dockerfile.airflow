@@ -1,0 +1,32 @@
+FROM apache/airflow:2.6.0-python3.10
+
+USER root
+
+# 1. Instala Java
+RUN apt-get update && \
+    apt-get install -y \
+        openjdk-11-jdk \
+        procps && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2. Configura variáveis de ambiente
+ENV SPARK_HOME=/opt/spark
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+# 3. Cria estrutura de diretórios
+RUN mkdir -p ${SPARK_HOME}/{jars,conf}
+
+# 4. Copia arquivos
+COPY ./spark/conf/spark-defaults.conf ${SPARK_HOME}/conf/
+COPY ./jars/*.jar ${SPARK_HOME}/jars/
+
+# 5. Instala dependências Python (formato correto)
+USER airflow
+RUN pip install --no-cache-dir \
+    pyspark==3.4.1 \
+    minio==7.1.15 \
+    pandas \
+    boto3 \
+    pyarrow

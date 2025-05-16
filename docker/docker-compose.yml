@@ -11,10 +11,10 @@ x-airflow-common: &airflow-common
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
-    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ${AIRFLOW_PROJ_DIR:-.}/scripts:/opt/airflow/scripts
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+    - ./airflow/scripts:/opt/airflow/scripts
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on: &airflow-common-depends-on
     postgres:
@@ -40,9 +40,9 @@ services:
     <<: *airflow-common
     command: webserver
     ports:
-      - "8080:8080"
+      - "8081:8080"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      test: ["CMD", "curl", "--fail", "http://localhost:8081/health"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -53,14 +53,14 @@ services:
       airflow-init:
         condition: service_completed_successfully
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./airflow
+      dockerfile: dockerfile.airflow
 
   airflow-scheduler:
     <<: *airflow-common
     command: scheduler
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+      test: ["CMD-SHELL", "curl --fail http://localhost:8081/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -71,14 +71,14 @@ services:
       airflow-init:
         condition: service_completed_successfully
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./airflow
+      dockerfile: dockerfile.airflow
 
   airflow-init:
     <<: *airflow-common
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./airflow
+      dockerfile: dockerfile.airflow
     entrypoint: /bin/bash
     command:
       - -c
@@ -108,7 +108,7 @@ services:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
 
   minio:
-    image: fjardim/mds-minio
+    image: minio/minio:latest
     container_name: minio
     command: server --console-address ":9001" /data
     ports:
@@ -118,33 +118,57 @@ services:
     environment:
       MINIO_ROOT_USER: admin
       MINIO_ROOT_PASSWORD: minioadmin
-      MINIO_ACCESS_KEY: datalake
-      MINIO_SECRET_KEY: datalake
     volumes:
       - ./minio/data1:/data
       - ./scripts:/scripts
 
-  spark:
-    image: bitnami/spark:3.3
+  spark-master:
+    image: bitnami/spark:3.4.1
+    container_name: spark-master
     environment:
       - SPARK_MODE=master
-    hostname: spark
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
     ports:
-      - "8081:8080"
+      - "7077:7077"   # Spark master port
+      - "8080:8080"   # Spark master UI
     volumes:
-      - ./spark-apps:/opt/bitnami/spark/apps
       - ./data:/data
 
   spark-worker:
-    image: bitnami/spark:3.3
+    image: bitnami/spark:3.4.1
+    container_name: spark-worker
+    depends_on:
+      - spark-master
     environment:
       - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark:7077
-    depends_on:
-      - spark
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+
+  jupyter:
+    build:
+      context: ./jupyter
+      dockerfile: dockerfile.jupyter
+    container_name: jupyter
+    ports:
+      - "8888:8888"
     volumes:
-      - ./spark-apps:/opt/bitnami/spark/apps
-      - ./data:/data
+      - ./jars:/opt/spark/jars 
+      - ./jupyter/work:/home/jovyan/work
+      - ./jupyter/data:/data
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+    command: ["start-notebook.py", "--NotebookApp.token=''", "--NotebookApp.password=''"]
+    depends_on:
+      - spark-master
 
 volumes:
   postgres-db-volume:

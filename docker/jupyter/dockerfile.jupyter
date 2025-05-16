@@ -1,0 +1,52 @@
+FROM jupyter/all-spark-notebook:latest
+
+USER root
+
+# 1. Instala Java 17 e dependências
+RUN apt-get update && \
+    apt-get install -y \
+        openjdk-17-jdk \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2. Configuração de ambiente 
+ENV SPARK_HOME=/usr/local/spark 
+ENV PATH="${SPARK_HOME}/bin:${PATH}"
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+ENV PYTHONPATH="${SPARK_HOME}/python:${PYTHONPATH}"
+
+# 3. Configuração do MinIO 
+ENV AWS_ACCESS_KEY_ID=admin
+ENV AWS_SECRET_ACCESS_KEY=minioadmin
+ENV S3_ENDPOINT=http://minio:9000
+
+# 4. Configuração do Spark
+RUN mkdir -p ${SPARK_HOME}/conf && \
+    echo "spark.hadoop.fs.s3a.endpoint ${S3_ENDPOINT}" >> ${SPARK_HOME}/conf/spark-defaults.conf && \
+    echo "spark.hadoop.fs.s3a.access.key ${AWS_ACCESS_KEY_ID}" >> ${SPARK_HOME}/conf/spark-defaults.conf && \
+    echo "spark.hadoop.fs.s3a.secret.key ${AWS_SECRET_ACCESS_KEY}" >> ${SPARK_HOME}/conf/spark-defaults.conf && \
+    echo "spark.hadoop.fs.s3a.path.style.access true" >> ${SPARK_HOME}/conf/spark-defaults.conf && \
+    echo "spark.hadoop.fs.s3a.impl org.apache.hadoop.fs.s3a.S3AFileSystem" >> ${SPARK_HOME}/conf/spark-defaults.conf
+
+# 5. Cópia dos JARs e links simbólicos
+COPY jars/hadoop-aws-3.3.4.jar ${SPARK_HOME}/jars/
+COPY jars/aws-java-sdk-bundle-1.12.262.jar ${SPARK_HOME}/jars/
+RUN cd ${SPARK_HOME}/jars && \
+    ln -sf hadoop-aws-3.3.4.jar hadoop-aws.jar && \
+    ln -sf aws-java-sdk-bundle-1.12.262.jar aws-java-sdk.jar
+
+# 6. Instalação de bibliotecas Python
+RUN pip install --no-cache-dir \
+    pyspark==3.4.1 \
+    pandas \
+    pyarrow \
+    minio==7.1.15 \
+    boto3 \
+    findspark \
+    matplotlib \
+    seaborn \
+    scikit-learn
+
+USER ${NB_UID}
