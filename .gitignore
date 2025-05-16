@@ -1,0 +1,60 @@
+### Python ###
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+.Python
+venv/
+env/
+.venv/
+ENV/
+pip-selfcheck.json
+*.egg-info/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+### Docker ###
+**/docker-compose*.yml
+**/.dockerignore
+**/Dockerfile
+**/docker-compose*
+**/.env.docker
+**/docker-data/
+
+### Airflow ###
+airflow/logs/
+airflow/plugins/
+airflow/airflow.cfg
+airflow/webserver_config.py
+airflow/dags/__pycache__/
+
+### Java/JAR ###
+*.jar
+*.war
+*.ear
+*.class
+*.iml
+
+### IDE & Ferramentas ###
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+### Logs & Temporários ###
+*.log
+*.tmp
+*.bak
+*.pid
+
+### Arquivos de Ambiente ###
+.env
+.env.local
+.env.dev
+.env.prod
+.secrets
