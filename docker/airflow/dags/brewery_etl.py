@@ -2,7 +2,7 @@ import sys
 import os
 
 #from scripts.gold_layer import agrega_dados_gold_layer
-from scripts.silver_layer import processa_dados_silver_layer
+#from scripts.silver_layer import processa_dados_silver_layer
 from scripts.bronze_layer import carrega_dados_raw_bucket_s3
 from datetime import datetime, timedelta
 from airflow import DAG
@@ -36,11 +36,11 @@ bronze_task = PythonOperator(
 )
 
 # Task para a camada Silver
-silver_task = PythonOperator(
-    task_id='processa_dados_silver_layer',
-    python_callable=processa_dados_silver_layer,
-    dag=dag
-)
+# silver_task = PythonOperator(
+#     task_id='processa_dados_silver_layer',
+#     python_callable=processa_dados_silver_layer,
+#     dag=dag
+#)
 
 ## Task para a camada Gold
 #gold_task = PythonOperator(
@@ -50,5 +50,5 @@ silver_task = PythonOperator(
 #)
 
 # Definindo a ordem de execução
-bronze_task >> silver_task 
-# >> gold_task
+bronze_task 
+# >> silver_task  >> gold_task
