@@ -71,8 +71,12 @@ senha: minioadmin
 
 ![image](https://github.com/user-attachments/assets/a62aa3a4-ed18-45a4-b219-7d817286f758)
 
-#### Observações do processo.
-   1. Eu não consegui finalizar a configuração da docker para rodar os processo de processamento de dados e agreagação dos dados na camada gold via DAG.
+### Observações do processo.
+   1. Eu não consegui finalizar a configuração da docker para rodar os processo de processamento de dados e agreagação dos dados na camada gold via DAG. Os arquivos da Dag onde está o script que seria carregado está no caminho:
+
+      Caminho: beer_case\docker\airflow\dags\scripts
+
+
    2. Então eu montei localmente mesmo uma chamada do Spark para demonstrar como o dado parquet chegaria ao repositório do MinIO.
    3. Por eu fazer localmente o MinIO não se comunicou bem com o container
    4. O Container possui o Jupyter notebook porém como o Spark ficou configurado de forma incompleta não foi possível demonstrar a interação via docker.
@@ -82,4 +86,4 @@ senha: minioadmin
 Li alguns artigos, para conhecer mais das ferramentas de observabilidade, uma que gostei foi o grafana. O Grafana me possbilitaria  criar o que chamam de  "traces", onde eu poderia enviar ao grafana possibilidade de que ele me gere métricas que podem me indicar um gargalo, um processamento muito alto.
 Grafana Também permite que alem das métricas, me gere logs do que foi executado, possibilitando que eu crie alertas e possa disparar esses alertas para times, pessoas em específico, a fim de dar possibilidade do time entrar com uma correção.
 
-A primeira possibilidade seria agendar as rotinas via um parâmetro da Dag do Airflow, para garantir um schedule dos processos. A partir do Airflow também é possível identificar os logs de erros das dags e dos processos, já que o Airflow tem uma aba que contém todos os logs do que foi processado, interações, etc.
+A primeira possibilidade seria agendar as rotinas via um parâmetro da Dag do Airflow, para garantir um schedule dos processos. A partir do Airflow também é possível identificar os logs de erros das dags e dos processos, já que o Airflow tem uma aba que contém todos os logs do que foi processado, interações, possibilidades de avisar times, via e-mail, via webhook.
