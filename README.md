@@ -4,6 +4,7 @@ Demonstrar a arquitetura do tipo "medallion", com camadas de dados brutos(bronze
 ### Arquitetura
    Usei um docker para compor os componentes de que preciso
    Contem:
+   
       1. Minio - Storage
       
       2. Airflow - Orquestrador
