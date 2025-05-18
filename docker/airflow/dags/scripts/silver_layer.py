@@ -52,7 +52,7 @@ def processa_dados_silver_layer():
 
     # 7. Salva na camada silver com particionamento
     silver_path = "s3a://brewery-silver/breweries"
-    silver_df.write.mode("overwrite").partitionBy("state").parquet(silver_path)
+    silver_df.write.mode("overwrite").partitionBy("country").parquet(silver_path)
 
     spark.stop()
     print(f"Processamento concluído e dados salvos em {silver_path}")
