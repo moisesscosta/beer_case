@@ -29,7 +29,4 @@ def agrega_dados_gold_layer():
     gold_path = "s3a://gold-layer/breweries_aggregated"
     gold_df.write.mode("overwrite").parquet(gold_path)
 
-    # Salva também como tabela temporária para uso no PostgreSQL
-    gold_df.createOrReplaceTempView("brewery_aggregates")
-
     spark.stop()
