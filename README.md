@@ -5,8 +5,11 @@ Demonstrar a arquitetura do tipo "medallion", com camadas de dados brutos(bronze
    Usei um docker para compor os componentes de que preciso
    Contem:
       1. Minio - Storage
+      
       2. Airflow - Orquestrador
+      
       3. Spark - Processador de dados
+      
       4. Jupyter - Para verificar arquivos python
 
 ### Pré Requisitos:
