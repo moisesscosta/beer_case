@@ -23,7 +23,7 @@ def processa_dados_silver_layer():
     response = minio_client.get_object(bucket, file_name)
     json_data = json.load(io.BytesIO(response.read()))
 
-    # 3. Cria um Pandas DataFrame
+    # 3. Criando o dataframe
     pandas_df = pd.DataFrame(json_data)
 
     # 4. Inicializa Spark
@@ -50,7 +50,7 @@ def processa_dados_silver_layer():
         col("website_url")
     ).withColumn("state", when(col("state").isNull(), "UNKNOWN").otherwise(col("state")))
 
-    # 7. Salva na camada silver com particionamento
+    # 7. Salva na camada silver com particionamento em arquivo parquet.
     silver_path = "s3a://brewery-silver/breweries"
     silver_df.write.mode("overwrite").partitionBy("country").parquet(silver_path)
 
