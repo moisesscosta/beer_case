@@ -78,9 +78,11 @@ senha: minioadmin
 
 
    2. Então eu montei localmente mesmo uma chamada do Spark para demonstrar como o dado parquet chegaria ao repositório do MinIO.
-   3. Por eu fazer localmente o MinIO não se comunicou bem com o container
-   4. O Container possui o Jupyter notebook porém como o Spark ficou configurado de forma incompleta não foi possível demonstrar a interação via docker.
-   5. Na pasta \beer_case\docker\jupyter\work terá os arquivos de carga e de processamento da camada.
+        1. Para ver a execução é ncessário instalar o python 3.11 e executar no jupyter notebook localmente.
+        2. Diretório das pastas dos arquivos de execução local: beer_case\docker\jupyter\work
+   4. Por eu fazer localmente o MinIO não se comunicou bem com o container
+   5. O Container possui o Jupyter notebook porém como o Spark ficou configurado de forma incompleta não foi possível demonstrar a interação via docker.
+   6. Na pasta \beer_case\docker\jupyter\work terá os arquivos de carga e de processamento da camada.
 
 ## Sobre monitoramento de alertas
 Li alguns artigos, para conhecer mais das ferramentas de observabilidade, uma que gostei foi o grafana. O Grafana me possbilitaria  criar o que chamam de  "traces", onde eu poderia enviar ao grafana possibilidade de que ele me gere métricas que podem me indicar um gargalo, um processamento muito alto.
